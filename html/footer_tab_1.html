@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+   <style>
+      body{
+            font-size: 14px;
+            font-family: 微软雅黑;
+        }
+        #list {
+            padding: 5px;
+        }
+        #list h4 img{
+            width:35px;
+            height: 35px;
+            border-radius:35px;
+            float: left;
+        }
+        #list h4 {
+            line-height: 25px;
+        }
+        #list p{
+            margin: 5px;
+            font-size: 14px;
+            padding: 5px;
+        }
+        #list div span{
+            float: right;
+        }
+        #h10{
+            height: 10px;
+            background: #ccc;
+        }
+   </style>
+</head>
+<body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/zepto.min.js"></script>
+<script type="text/javascript" src="../script/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="../script/doT.js"></script>
+<div id="content">
+<script type="text/x-dot-template" id="template">
+{{~it:row}}
+    <div id="h10"></div>
+    <div id="list">
+        <h4><img src="./psbCA8JGUJP.jpg" width="45" height="45"/>&nbsp;&nbsp;{{=row.title}}</h4>
+        <p>{{=row.content}}</p>
+        <div>
+            <img src="./xiao.png" width="30" height="30" />&nbsp;&nbsp;
+            <img src="./ku.png" width="30" height="30"/>&nbsp;&nbsp;
+            <img src="./msg.png" width="30" height="30"/>
+            <span><img src="./share.png" width="30" height="30"/></span>
+        </div>
+   </div>
+{{~}}
+</script>
+</div>
+</body>
+<script type="text/javascript">
+    var off = 0;
+    var lt = 4;
+    var tpl = $api.byId('template').innerHTML;
+    var dot = doT.template(tpl);
+    function getJson(is_pull){
+        if(is_pull){
+            off = 0;
+        }else{
+            off+=lt;
+        }
+         api.ajax({
+             url: 'http://104.236.207.62/api/get_jiushi.php',
+             method: 'post',
+             timeout: 30,
+             dataType: 'json',
+             data:{
+                  values:{
+                    off:off,
+                    lt:lt
+                  }
+             },
+             returnAll:false
+         },function(ret,err){
+             if (ret) {
+                     if(is_pull){
+                            $api.byId('content').innerHTML=dot(ret);
+                        }else{
+                            $api.append($api.byId('content'),dot(ret));
+                        }
+             } else {
+                 api.alert({
+                     msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                 });
+             };
+         });
+    }
+    function fuall(){
+         api.setRefreshHeaderInfo({
+            visible: true,
+            loadingImg: 'widget://image/refresh.png',
+            bgColor: '#ccc',
+            textColor: '#fff',
+            textDown: '下拉刷新...',
+            textUp: '松开刷新...',
+            showTime: true,
+        }, function(ret, err){
+            //从服务器加载数据，完成后调用api.refreshHeaderLoadDone()方法恢复组件到默认状态
+            //调用获取数据的方法
+            getJson(true);
+            api.refreshHeaderLoadDone();
+        });
+    }
+      function fnpush(){
+            api.addEventListener({
+                name:'scrolltobottom',
+                extra:{
+                    threshold:200
+                }
+            },function(ret,err){
+                getJson(false);
+            });
+         }
+    apiready = function(){
+        //getJson();
+        fuall();
+        fnpush();
+        setTimeout(function(){
+           api.refreshHeaderLoading();
+        },300);
+    }
+        
+</script>
+</html>

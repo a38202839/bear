@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+     <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+
+    <style>
+        body{
+            
+        }
+    </style>
+</head>
+<body>
+<header id="aui_header" class="aui-bar aui-bar-nav aui-bar-warning">
+    <a id="back" class="aui-btn aui-btn-warning aui-pull-left">
+        <span class="aui-iconfont aui-icon-left"></span>
+    </a>
+    <a class="aui-btn aui-btn-warning aui-pull-left active">
+        <span class="aui-iconfont aui-icon-location"></span>
+    </a>
+    <div class="aui-title">贱之世界</div>
+    <a class="aui-pull-right">
+        <span class="aui-iconfont aui-icon-my"></span>
+    </a>
+</header>
+            <li class="aui-list-view-cell">
+            <i class="aui-iconfont aui-icon-like aui-bg-warning" id="addtj"></i>添加囧事
+            </li>
+            <li class="aui-list-view-cell">
+                <i class="aui-iconfont aui-icon-like aui-bg-warning" id="addqt"></i>添加囧图
+            </li>
+            <li class="aui-list-view-cell" id="tuic">
+                <i class="aui-iconfont aui-icon-like aui-bg-warning"></i>退出登陆
+            </li>
+            
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/zepto.min.js"></script>
+<script type="text/javascript">
+    apiready = function(){
+    	$('#back').bind('tap',function(){
+    		api.closeWin();
+    	});
+        $('#tuic').bind('tap',function(){
+        	api.removePrefs({
+        		key:'login_username'
+        	});
+        	api.closeWin();
+        });
+        $('#addtj').bind('tap',function(){
+        var header = $api.byId('aui_header');
+        $api.fixStatusBar(header); 
+        var headerPos = $api.offset(header);
+        var body_h = $api.offset($api.dom('body')).h;
+        api.openFrame ({
+            name: 'add_qiushi',
+            url:'./frame_qiushi.html',
+            bounces:true,
+            rect:{
+                x:0,
+                y:headerPos.h,
+                w:'auto',
+                h:body_h - headerPos.h
+            }
+        });
+    
+        });
+        $('#addqt').bind('tap',function(){
+            api.actionSheet({
+                title: '添加糗图',
+                cancelTitle: '取消',
+                buttons: ['选择相册', '优雅自拍']
+            },function(ret,err){
+                api.getPicture({
+                    sourceType: 'album',
+                    encodingType: 'jpg',
+                    mediaValue: 'pic',
+                    destinationType: 'url',
+                    allowEdit: true,
+                    quality: 50,
+                    targetWidth: 100,
+                    targetHeight: 100,
+                    saveToPhotoAlbum: false
+                }, function(ret, err){ 
+                    if (ret) {
+                        api.alert({msg:ret.data});
+                    } else{
+                        api.alert({msg:err.msg});
+                    }
+                });
+            });
+        });
+    };
+</script>
+</html>

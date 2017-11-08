@@ -1,0 +1,147 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width"/>
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>啥子</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+	<style>
+		#con{
+			margin: 10px;
+			font-size: 24px; 
+		}
+		ul{
+			margin-bottom: 10px;
+		}
+		ul li{ 
+			margin: 5px 10px;
+			padding: 5px;
+			color: #000;
+			word-wrap: break-word;
+		}
+	</style>
+</head>
+<body>
+    <header id="aui_header" class="aui-bar aui-bar-nav aui-bar-warning">
+    <a class="aui-btn aui-btn-warning aui-pull-left">
+        <span class="aui-iconfont aui-icon-left"></span>
+    </a>
+    <a class="aui-btn aui-btn-warning aui-pull-left active">
+        <span class="aui-iconfont aui-icon-location"></span>
+    </a>
+    <div class="aui-title">贱之世界</div>
+    <a class="aui-pull-right">
+        <span class="aui-iconfont aui-icon-my"></span>
+    </a>
+</header>
+<div id="main"></div>
+<footer class="aui-nav" id="aui-footer">
+        <ul class="aui-bar-tab">
+            <li class="active-warning" id="tabbar1" tapmode="" onclick="randomSwitchBtn(this,'栏目1',0)">
+                <span class="aui-iconfont aui-icon-favor"></span>
+                <p>文章</p>
+            </li>
+            <li id="tabbar2" tapmode="" onclick="randomSwitchBtn(this,'栏目2',1)">
+                <span class="aui-iconfont aui-icon-mark"></span>
+                <p>纯图</p>
+            </li>
+            <li id="tabbar3" tapmode="" onclick="randomSwitchBtn(this,'栏目3',2)">
+                <span class="aui-iconfont aui-icon-like"></span>
+                <p>发现</p>
+            </li>
+            <li id="tabbar4" tapmode="" onclick="randomSwitchBtn(this,'栏目4',3)">
+                <span class="aui-iconfont aui-icon-my"></span>
+                <p>关于</p>
+            </li>
+        </ul>
+    </footer>
+<script type="text/javascript">
+    apiready = function(){
+        var header = $api.byId('aui_header');
+        $api.fixStatusBar(header); 
+        var headerPos = $api.offset(header);
+        var body_h = $api.offset($api.dom('body')).h;
+        var footer_h = $api.offset($api.byId('aui-footer')).h;
+        api.openFrameGroup ({
+            name: 'footer_tab_demo',
+            scrollEnabled:true,
+            rect:{x:0, y:headerPos.h, w:'auto', h:body_h - headerPos.h - footer_h},
+            index:0,
+            preload:3,
+            frames:
+            [{
+                name: 'footer_tab_1', 
+                url: 'footer_tab_1.html', 
+                bounces:false
+            },{
+                name: 'footer_tab_2', 
+                url: 'footer_tab_2.html', 
+                bounces:false
+            },{
+                name: 'footer_tab_3', 
+                url: 'footer_tab_3.html', 
+                bounces:false
+            },{
+                name: 'footer_tab_4', 
+                url: 'footer_tab_4.html', 
+                bounces:false
+            }]
+        }, function(ret, err){
+            var footer = $api.byId('aui-footer');
+            var footerAct = $api.dom(footer, '.aui-bar-tab li.active-warning');
+            $api.removeCls(footerAct, 'active-warning');
+            var name = ret.name;
+            var index = ret.index;
+            if(index==0){
+                $api.text($api.byId('header-title'),'栏目1');
+                $api.addCls($api.byId('tabbar1'), 'active-warning');
+            }else if(index==1){
+                $api.text($api.byId('header-title'),'栏目2');
+                $api.addCls($api.byId('tabbar2'), 'active-warning');
+            }else if(index==2){
+                $api.text($api.byId('header-title'),'栏目3');
+                $api.addCls($api.byId('tabbar3'), 'active-warning');
+            }else if(index==3){
+                $api.text($api.byId('header-title'),'栏目4');
+                $api.addCls($api.byId('tabbar4'), 'active-warning');
+            }
+        });
+        
+        $api.addEvt($api.byId('back'), 'click', function(){
+            api.closeWin();
+        });
+    };
+    function randomSwitchBtn(obj, name, index) {
+        $api.text($api.byId('header-title'),name);
+        var footer = $api.byId('aui-footer');
+        var footerAct = $api.dom(footer, '.aui-bar-tab li.active-warning');
+        $api.removeCls(footerAct, 'active-warning');
+        $api.addCls(obj, 'active-warning');
+        api.setFrameGroupIndex({
+            name: 'footer_tab_demo',
+            index: index
+        });
+    }
+</script>
+
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/zepto.min.js"></script>
+<script type="text/javascript">
+   //  apiready = function(){
+   //  	setTimeout("fnskip()",api.pageParam.closeTime*3000);
+   //  };
+		 // function fnskip(){
+   //      //加载main.html页面。
+   //      api.openWin({
+   //          name: 'ad',
+   //          url: './ad.html',
+   //          bounces: false,
+   //          pageParam:{cloceTime:'3'},
+   //          bgColor:'./ad1.png'
+   //      })
+   //  }
+  </script>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+    <style>
+       
+    </style>
+</head>
+<body>
+
+    <div class="aui-form">
+            <div class="aui-input-row">
+                <i class="aui-input-addon  aui-iconfont aui-icon-people"></i>
+                <input type="text" class="aui-input" placeholder="用户名" id="username">
+            </div>
+            <div class="aui-input-row">
+            <i class="aui-input-addon  aui-iconfont aui-icon-lock"></i>
+            <input type="password" class="aui-input" placeholder="密码" id="password">
+                
+            </div>
+            <div class="aui-btn-row">
+                <div class="aui-btn aui-btn-success" onclick="return false;" id="rest">注册</div>&nbsp;&nbsp;
+                <div class="aui-btn aui-btn-warning" onclick="return false;" id="back1">取消</div>
+            </div>
+        </div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/zepto.min.js"></script>
+<script type="text/javascript">
+    apiready = function(){
+        $('#back').bind('tap',function(){
+            api.closeFrame();
+        });
+        $('#back1').bind('tap',function(){
+            api.closeFrame();
+        });
+        $('#rest').bind('tap',function(){
+            var username = $api.trim($('#username').val());
+            var password = $api.trim($('#password').val());
+            if(username=='' || password == ''){
+                api.toast({
+                     msg:'用户名和密码不能为空',
+                     duration:2000,
+                     location:'bottom'
+                });
+                return false;
+            }
+            api.ajax({
+                url: 'http://104.236.207.62/api/register.php',
+                method: 'post',
+                timeout: 30,
+                dataType: 'json',
+                data:{
+                    values:{
+                        username:username,
+                        password:password
+                    }
+                },
+                returnAll:false
+            },function(ret,err){
+                if (ret) {
+                     if(ret.status == 0){
+                                 api.toast({
+                                     msg:'数据异常',
+                                     duration:2000,
+                                     location:'bottom'
+                                });
+                             }else if(ret.status == 1){
+                                 api.toast({
+                                     msg:'注册成功',
+                                     duration:2000,
+                                     location:'bottom'
+                                });
+                                 setTimeout(function(){
+                                    api.closeFrame({
+                                        name:'register'
+                                    });
+                                 },2000);
+                             }else if(ret.status == 2){
+                                  api.toast({
+                                     msg:'注册失败',
+                                     duration:2000,
+                                     location:'bottom'
+                                });
+                             }
+                } else {
+                     api.alert({
+                         msg:('错误码:'+err.code+';错误信息:'+err.msg+'网络错误码:'+err.statusCode)
+                     });
+                };
+            });
+        });
+    }
+</script>
+
+</html>

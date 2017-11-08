@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+    <style>
+       
+    </style>
+</head>
+<body>
+<header id="aui_header" class="aui-bar aui-bar-nav aui-bar-warning">
+    <a id="back" class="aui-btn aui-btn-warning aui-pull-left">
+        <span class="aui-iconfont aui-icon-left"></span>
+    </a>
+    <a class="aui-btn aui-btn-warning aui-pull-left active">
+        <span class="aui-iconfont aui-icon-location"></span>
+    </a>
+    <div class="aui-title">贱之世界</div>
+    <a class="aui-pull-right">
+        <span class="aui-iconfont aui-icon-my"></span>
+    </a>
+</header>
+    <div class="aui-form">
+            <div class="aui-input-row">
+                <i class="aui-input-addon  aui-iconfont aui-icon-people"></i>
+                <input type="text" class="aui-input" placeholder="用户名" id="username">
+            </div>
+            <div class="aui-input-row">
+            <i class="aui-input-addon  aui-iconfont aui-icon-lock"></i>
+            <input type="password" class="aui-input" placeholder="密码" id="password">
+                
+            </div>
+            <div class="aui-btn-row">
+                <div class="aui-btn aui-btn-success" onclick="return false;" id="log">登陆</div>&nbsp;&nbsp;
+                <div class="aui-btn aui-btn-warning" onclick="return false;" id="register">注册</div>
+            </div>
+        </div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/zepto.min.js"></script>
+<script type="text/javascript">
+    apiready = function(){
+        $('#back').bind('tap',function(){
+            api.closeWin({
+               name:'login'
+            })
+        });
+        $('#register').bind('tap',function(){
+        var header = $api.byId('aui_header');
+        $api.fixStatusBar(header); 
+        var headerPos = $api.offset(header)+15;
+        var body_h = $api.offset($api.dom('body')).h;
+        api.openFrame ({
+            name: 'register',
+            url:'./frame_register.html',
+            bounces:true,
+            rect:{
+                x:0,
+                y:headerPos.h,
+                w:'auto',
+                h:body_h - headerPos.h
+            }
+        });
+    
+        });
+        $('#log').bind('tap',function(){
+            var username = $api.trim($('#username').val());
+            var password = $api.trim($('#password').val());
+            if(username == '' || password == ''){
+                 api.toast({
+                     msg:'用户名和密码不能为空',
+                     duration:2000,
+                     location:'bottom'
+                });
+                return false;
+            }
+            api.ajax({
+                url: 'http://104.236.207.62/api/login.php',
+                method: 'post',
+                timeout: 30,
+                dataType: 'json',
+                 data:{
+                    values:{
+                        username:username,
+                        password:password
+                    }
+                },
+                returnAll:false
+            },function(ret,err){
+                if (ret) {
+                     if(ret.status == 0){
+                                 api.toast({
+                                     msg:'用户名或密码不能为空',
+                                     duration:2000,
+                                     location:'bottom'
+                                });
+                             }else if(ret.status == 1){
+                                 api.toast({
+                                     msg:'登陆成功',
+                                     duration:2000,
+                                     location:'bottom'
+                                });
+                                api.setPrefs({
+                                    key:'login_username',
+                                    value:username
+                                });
+                                 setTimeout(function(){
+                                    api.closeWin();
+                                 },2000);
+                             }else if(ret.status == 2){
+                                  api.toast({
+                                     msg:'账号或密码错误',
+                                     duration:2000,
+                                     location:'bottom'
+                                });
+                             }
+                } else {
+                    api.alert({
+                        msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                    });
+                };
+            });
+        });
+    };
+   
+</script>
+
+</html>
